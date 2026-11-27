@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>泡芙的烫法转盘</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap">
+<style>
+:root{--bg:#ffeef2;--peg:#ffd6e1;--ink:#6b3b45;--sub:#b07784;--card:#fffaf6;--line:#ffb8cb;--accent:#ff7f9f;--shadow:#f2a9bd;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2d1c24;--peg:#3d2630;--ink:#ffe3ea;--sub:#d6a1ae;--card:#43292f;--line:#7a4458;--accent:#ff8fab;--shadow:#1a0f14;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#2d1c24;--peg:#3d2630;--ink:#ffe3ea;--sub:#d6a1ae;--card:#43292f;--line:#7a4458;--accent:#ff8fab;--shadow:#1a0f14;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"ZCOOL KuaiLe","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+background-color:var(--bg);background-image:radial-gradient(circle,var(--peg) 6px,transparent 7px);background-size:34px 34px;
+display:flex;flex-direction:column;align-items:center;padding:22px 16px 44px}
+.title{margin:6px 0 0;font-weight:400;font-size:clamp(30px,8vw,42px);letter-spacing:.08em;text-align:center;
+text-shadow:0 3px 0 var(--card),0 0 12px var(--card),0 0 2px var(--card)}
+.sub{margin:6px 0 26px;padding:5px 16px;border-radius:999px;background:var(--card);border:2px dashed var(--line);color:var(--sub);font-size:15px;text-align:center}
+.stage{position:relative;width:min(88vw,440px);aspect-ratio:1;margin-top:10px}
+.stage canvas{width:100%;height:100%;display:block;border-radius:50%;filter:drop-shadow(0 8px 0 var(--shadow));transition:transform 5s cubic-bezier(.12,.62,.08,1)}
+.pointer{position:absolute;left:50%;top:-20px;width:46px;transform:translateX(-50%);transform-origin:50% 0;transition:transform .08s;z-index:3;filter:drop-shadow(0 3px 0 var(--shadow))}
+.pointer.tick{transform:translateX(-50%) rotate(-16deg)}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:29%;aspect-ratio:1;border-radius:50%;border:6px solid #fff;background:var(--card);padding:0;cursor:pointer;z-index:3;box-shadow:0 5px 0 var(--shadow);transition:transform .12s}
+.hub svg{width:100%;height:100%;display:block}
+.hub:hover:not(:disabled){transform:translate(-50%,-50%) scale(1.05)}
+.hub:active:not(:disabled){transform:translate(-50%,-46%) scale(.96)}
+.hub:disabled{cursor:wait}
+.hub:focus-visible{outline:4px solid var(--accent);outline-offset:3px}
+.tap{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);padding:2px 12px;border-radius:999px;background:var(--accent);color:#fff;border:3px solid #fff;font-size:15px;white-space:nowrap;box-shadow:0 3px 0 var(--shadow);animation:bob 1.1s ease-in-out infinite;pointer-events:none}
+.tap:before{content:"";position:absolute;left:50%;top:-9px;transform:translateX(-50%);border:5px solid transparent;border-top:0;border-bottom:7px solid var(--accent)}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-5px)}}
+.spinning .tap{display:none}
+.mouth-o{display:none}.spinning .mouth-o{display:inline}.spinning .mouth-s{display:none}
+.hint{margin:18px 0 0;color:var(--sub);font-size:15px}
+.result{position:relative;margin:20px 0 0;width:min(92vw,440px);padding:18px 16px 20px;background:var(--card);border:3px dashed var(--accent);border-radius:28px;text-align:center;box-shadow:0 6px 0 var(--shadow)}
+.result:before,.result:after{content:"";position:absolute;top:-9px;width:16px;height:16px;border-radius:50%;background:var(--accent);border:3px solid var(--card)}
+.result:before{left:22px}.result:after{right:22px}
+.result .label{color:var(--sub);font-size:15px}
+.result .name{display:inline-block;margin-top:6px;padding:2px 22px;border-radius:18px;font-size:clamp(36px,10vw,54px);letter-spacing:.1em;line-height:1.3;background:var(--hl,transparent);color:#6b3b45}
+.result.pop .name{animation:pop .55s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.5) rotate(-6deg)}100%{transform:scale(1) rotate(0)}}
+.records{width:min(92vw,440px);margin-top:22px;background:var(--card);border:2px solid var(--line);border-radius:22px;padding:14px 16px}
+.records h2{font-size:16px;font-weight:400;margin:0 0 10px;color:var(--sub);display:flex;justify-content:space-between;align-items:center}
+.records button{font:inherit;font-size:14px;background:none;border:none;color:var(--sub);text-decoration:underline;cursor:pointer;padding:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;min-height:32px}
+.chip{padding:4px 13px;border-radius:999px;color:#6b3b45;font-size:15px;border:2px solid #fff}
+.empty{color:var(--sub);font-size:14px}
+.snd{margin-top:10px;font:inherit;font-size:14px;padding:4px 14px;border-radius:999px;background:var(--card);color:var(--sub);border:2px solid var(--line);cursor:pointer}
+.snd:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
+@media (prefers-reduced-motion:reduce){.tap{animation:none}.stage canvas{transition-duration:.01s}.result.pop .name{animation:none}}
+</style>
+</head>
+<body>
+<h1 class="title">泡芙的烫法转盘</h1>
+<p class="sub">今天烫哪一种呀？交给转盘决定～</p>
+
+<div class="stage" id="stage">
+  <svg class="pointer" id="pointer" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 37C4 24 2 14 8 8c5-5 11-2 12 3 1-5 7-8 12-3 6 6 4 16-12 29z" fill="#ff7f9f" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>
+  <canvas id="wheel" width="960" height="960" aria-label="烫法转盘"></canvas>
+  <button class="hub" id="spin" type="button" aria-label="开转">
+    <svg viewBox="0 0 120 120" aria-hidden="true">
+      <ellipse cx="60" cy="92" rx="38" ry="14" fill="#f4c98d"/>
+      <path d="M26 82c8 8 16-2 24 4s16-2 24 4 14-4 20-8v6c-6 12-90 12-96 0z" fill="#fffaf0"/>
+      <path d="M16 74C14 44 34 22 60 22s46 22 44 52c-10 12-78 12-88 0z" fill="#f2b56a"/>
+      <path d="M30 40c6-9 16-14 26-14" stroke="#fbd7a0" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <circle cx="82" cy="34" r="2.6" fill="#fff4dc"/><circle cx="92" cy="46" r="2.2" fill="#fff4dc"/><circle cx="72" cy="28" r="2" fill="#fff4dc"/>
+      <circle cx="44" cy="58" r="4.5" fill="#5a3030"/><circle cx="76" cy="58" r="4.5" fill="#5a3030"/>
+      <circle cx="45.6" cy="56.4" r="1.4" fill="#fff"/><circle cx="77.6" cy="56.4" r="1.4" fill="#fff"/>
+      <ellipse cx="33" cy="68" rx="7" ry="4.5" fill="#ff9db3"/><ellipse cx="87" cy="68" rx="7" ry="4.5" fill="#ff9db3"/>
+      <path class="mouth-s" d="M54 68q6 6 12 0" stroke="#5a3030" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse class="mouth-o" cx="60" cy="70" rx="5" ry="6" fill="#5a3030"/>
+    </svg>
+    <span class="tap">点我</span>
+  </button>
+</div>
+<p class="hint">点一点中间的泡芙就开转</p>
+<button class="snd" id="snd" type="button" aria-pressed="true">声音：开</button>
+
+<div class="result" id="result" aria-live="polite">
+  <div class="label">这次就用</div>
+  <div class="name" id="name">？</div>
+</div>
+
+<div class="records">
+  <h2>转过的结果 <button id="clear" type="button">清空</button></h2>
+  <div class="chips" id="chips"><span class="empty">还没有记录哦</span></div>
+</div>
+<canvas id="fx"></canvas>
+
+<script>
+var ITEMS=["常规烫","澡巾烫","毛巾烫","毛巾闪","澡巾闪","细闪","粗闪","玻璃闪","爆闪"];
+var COLORS=["#ffc8d6","#ffe29a","#bfe9cf","#bcd9ff","#e3ccff","#ffd2ae","#b5ece4","#ffbdb0","#dcec9c"];
+var N=ITEMS.length,A=360/N;
+var cv=document.getElementById("wheel"),ctx=cv.getContext("2d");
+var btn=document.getElementById("spin"),nameEl=document.getElementById("name"),resEl=document.getElementById("result");
+var chips=document.getElementById("chips"),stage=document.getElementById("stage"),pointer=document.getElementById("pointer");
+var rot=0,spinning=false,records=[];
+var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function draw(){
+  var S=cv.width,c=S/2,R=c-4,R2=R-38,i;
+  ctx.clearRect(0,0,S,S);
+  ctx.beginPath();ctx.arc(c,c,R,0,Math.PI*2);ctx.fillStyle="#ff8fab";ctx.fill();
+  ctx.lineWidth=8;ctx.strokeStyle="#fff";ctx.stroke();
+  for(i=0;i<24;i++){
+    var t=i/24*Math.PI*2;
+    ctx.beginPath();ctx.arc(c+Math.cos(t)*(R-19),c+Math.sin(t)*(R-19),7,0,Math.PI*2);
+    ctx.fillStyle=i%2?"#fff":"#ffe29a";ctx.fill();
+  }
+  for(i=0;i<N;i++){
+    var a0=(i*A-90)*Math.PI/180,a1=((i+1)*A-90)*Math.PI/180;
+    ctx.beginPath();ctx.moveTo(c,c);ctx.arc(c,c,R2,a0,a1);ctx.closePath();
+    ctx.fillStyle=COLORS[i];ctx.fill();
+    ctx.lineWidth=5;ctx.strokeStyle="#fff";ctx.stroke();
+    ctx.save();ctx.translate(c,c);ctx.rotate((a0+a1)/2);
+    ctx.fillStyle="#6b3b45";ctx.textAlign="right";ctx.textBaseline="middle";
+    ctx.font='400 54px "ZCOOL KuaiLe","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+    ctx.fillText(ITEMS[i],R2-30,0);
+    ctx.fillStyle="rgba(255,255,255,.85)";
+    ctx.beginPath();ctx.arc(R2-14,-46,5,0,7);ctx.arc(R2-14,46,5,0,7);ctx.fill();
+    ctx.restore();
+  }
+  ctx.beginPath();ctx.arc(c,c,R2,0,Math.PI*2);ctx.lineWidth=8;ctx.strokeStyle="#fff";ctx.stroke();
+}
+function render(){
+  if(!records.length){chips.innerHTML='<span class="empty">还没有记录哦</span>';return}
+  chips.innerHTML="";
+  records.forEach(function(i){
+    var s=document.createElement("span");s.className="chip";s.textContent=ITEMS[i];s.style.background=COLORS[i];chips.appendChild(s);
+  });
+}
+var lastIdx=-1;
+function tickLoop(){
+  if(!spinning)return;
+  var m=new DOMMatrix(getComputedStyle(cv).transform);
+  var ang=Math.atan2(m.b,m.a)*180/Math.PI;
+  var k=Math.floor((((-ang)%360)+360)%360/A);
+  if(k!==lastIdx){lastIdx=k;playTick();pointer.classList.add("tick");setTimeout(function(){pointer.classList.remove("tick")},80)}
+  requestAnimationFrame(tickLoop);
+}
+function confetti(){
+  if(reduce)return;
+  var fx=document.getElementById("fx"),x=fx.getContext("2d");
+  fx.width=innerWidth;fx.height=innerHeight;
+  var b=stage.getBoundingClientRect(),ps=[],j;
+  for(j=0;j<90;j++)ps.push({x:b.left+b.width/2,y:b.top+b.height*0.35,vx:(Math.random()-.5)*14,vy:-4-Math.random()*11,s:6+Math.random()*7,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:COLORS[j%N],round:j%3===0});
+  var f=0;
+  (function go(){
+    x.clearRect(0,0,fx.width,fx.height);
+    ps.forEach(function(p){
+      p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;
+      x.save();x.translate(p.x,p.y);x.rotate(p.r);x.globalAlpha=Math.max(0,1-f/120);x.fillStyle=p.c;
+      if(p.round){x.beginPath();x.arc(0,0,p.s/2,0,7);x.fill()}else{x.fillRect(-p.s/2,-p.s/2,p.s,p.s)}
+      x.restore();
+    });
+    if(++f<120)requestAnimationFrame(go);else x.clearRect(0,0,fx.width,fx.height);
+  })();
+}
+var ac=null,muted=false,tc=0,lastTickT=0;
+var SCALE=[523.25,587.33,659.25,783.99,880,1046.5],MEL=[0,2,4,5,4,2,3,1];
+function audio(){
+  if(muted)return null;
+  if(!ac){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{ac=new C()}catch(e){return null}}
+  if(ac.state==="suspended")ac.resume();
+  return ac;
+}
+function note(f,delay,dur,type,vol){
+  var a=audio();if(!a)return;
+  var t=a.currentTime+delay,o=a.createOscillator(),g=a.createGain();
+  o.type=type||"sine";o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||.15,t+.01);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+dur+.02);
+}
+function playTick(){
+  var n=performance.now();if(n-lastTickT<45)return;lastTickT=n;
+  note(SCALE[MEL[tc++%MEL.length]],0,.16,"triangle",.13);
+}
+function playStart(){[523.25,659.25,783.99,1046.5].forEach(function(f,i){note(f,i*.07,.18,"triangle",.14)})}
+function playWin(){[783.99,987.77,1174.66,1567.98].forEach(function(f,i){note(f,i*.12,.35,"sine",.17)});note(2093,.52,.5,"sine",.09)}
+function spin(){
+  if(spinning)return;
+  spinning=true;btn.disabled=true;stage.classList.add("spinning");
+  resEl.classList.remove("pop");nameEl.textContent="…";nameEl.style.setProperty("--hl","transparent");
+  var idx=Math.floor(Math.random()*N);
+  var off=A*(0.12+Math.random()*0.76);
+  var land=((-(idx*A+off))%360+360)%360;
+  rot=Math.ceil(rot/360)*360+360*6+land;
+  lastIdx=-1;playStart();
+  cv.style.transform="rotate("+rot+"deg)";
+  requestAnimationFrame(tickLoop);
+  var done=false;
+  function finish(){
+    if(done)return;done=true;
+    spinning=false;btn.disabled=false;stage.classList.remove("spinning");
+    nameEl.textContent=ITEMS[idx];nameEl.style.setProperty("--hl",COLORS[idx]);
+    void resEl.offsetWidth;resEl.classList.add("pop");
+    records.unshift(idx);if(records.length>12)records.pop();
+    render();confetti();playWin();
+  }
+  cv.addEventListener("transitionend",finish,{once:true});
+  setTimeout(finish,5400);
+}
+btn.addEventListener("click",spin);
+var sndBtn=document.getElementById("snd");
+sndBtn.addEventListener("click",function(){
+  muted=!muted;sndBtn.textContent=muted?"声音：关":"声音：开";sndBtn.setAttribute("aria-pressed",String(!muted));
+  if(!muted)note(783.99,0,.2,"triangle",.14);
+});
+document.getElementById("clear").addEventListener("click",function(){records=[];render()});
+draw();
+if(document.fonts&&document.fonts.load){document.fonts.load('54px "ZCOOL KuaiLe"').then(draw).catch(function(){})}
+</script>
+</body>
+</html>
